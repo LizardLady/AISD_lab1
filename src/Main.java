@@ -11,6 +11,9 @@ public class Main {
         List<Integer> list2 = new ArrayList<>(List.of(0, 1, 2, 4, 3, 5, 6, 7, 8, 9));
         new SelectionSort<Integer>().sort(list2);
 
+        List<Integer> list4 = new ArrayList<>(List.of(9, 8, 7, 6, 5, 4, 3, 2, 1, 0));
+        new BubbleSort<Integer>().sort(list4);
+
         List<Integer> list3 = new ArrayList<>();
         for (int i = 1000; i > 0; --i){
             list3.add(i);
@@ -19,5 +22,6 @@ public class Main {
         System.out.println(list1);
         System.out.println(list2);
         System.out.println(list3);
+        System.out.println(list4);
     }
 }
