@@ -15,7 +15,7 @@ public class Main {
         for (int i = 1000; i > 0; --i){
             list3.add(i);
         }
-        new SelectionSort<Integer>().sort(list3);
+        new InsertionSort<Integer>().sort(list3);
         System.out.println(list1);
         System.out.println(list2);
         System.out.println(list3);
