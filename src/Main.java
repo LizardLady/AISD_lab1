@@ -1,4 +1,6 @@
+import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -6,38 +8,97 @@ import java.util.List;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        List<Integer> list1 = new ArrayList<>(List.of(9, 8, 7, 6, 5, 4, 3, 2, 1, 0));
-        new SelectionSort<Integer>().sort(list1);
-        List<Integer> list2 = new ArrayList<>(List.of(0, 1, 2, 4, 3, 5, 6, 7, 8, 9));
-        new SelectionSort<Integer>().sort(list2);
+        List<SortAlgorithm<Integer>> fastSortAlgorithms = List.of(
+                new HeapSort<>(),
+                new MergeSort<>(),
+                new QuickSort<>(),
+                new ShellSort<>(),
+                new ShellSortHibbard<>(),
+                new ShellSortPratt<>()
+        );
 
-        List<Integer> list4 = new ArrayList<>(List.of(9, 8, 7, 6, 5, 4, 3, 2, 1, 0));
-        new BubbleSort<Integer>().sort(list4);
+        List<SortAlgorithm<Integer>> slowSortAlgorithms = List.of(
+                new BubbleSort<>(),
+                new InsertionSort<>(),
+                new SelectionSort<>()
+        );
+        drawAllAlgorithmsOnPane(fastSortAlgorithms, 100000, 500000, 5000);
+        drawAllAlgorithmsOnPane(slowSortAlgorithms, 1000, 10000, 200);
 
-        List<Integer> list5 = new ArrayList<>(List.of(9, 8, 7, 6, 5, 4, 3, 2, 1, 0));
-        new MergeSort<Integer>().sort(list5);
 
-        List<Integer> list6 = new ArrayList<>(List.of(9, 8, 7, 6, 5, 4, 3, 2, 1, 0));
-        new QuickSort<Integer>().sort(list6);
+        //drawAllAlgorithms(fastSortAlgorithms, 100000, 500000, 5000);
+        //drawAllAlgorithms(slowSortAlgorithms, 1000, 10000, 200);
 
-        List<Integer> list7 = new ArrayList<>(List.of(9, 8, 7, 6, 5, 4, 3, 2, 1, 0));
-        new ShellSortHibbard<Integer>().sort(list7);
+    }
 
-        List<Integer> list8 = new ArrayList<>(List.of(9, 8, 7, 6, 5, 4, 3, 2, 1, 0));
-        new HeapSort<Integer>().sort(list8);
+    private static void drawAllAlgorithms(List<SortAlgorithm<Integer>> sortAlgorithms, int startSize, int maxSize, int step) {
+        for (SortAlgorithm<Integer> algorithm : sortAlgorithms) {
+            String title = algorithm.getClass().getSimpleName();
+            List<Integer> sizes = new ArrayList<>();
+            List<Integer> durations = new ArrayList<>();
 
-        List<Integer> list3 = new ArrayList<>();
-        for (int i = 1000; i >= 0; --i){
-            list3.add(i);
+            for (int currentSize = startSize; currentSize <= maxSize; currentSize += step) {
+                sizes.add(currentSize);
+
+                List<Integer> toSortList = new ArrayList<>(currentSize);
+                for (int j = 0; j < currentSize; ++j)
+                    toSortList.add(currentSize - j);
+
+                Collections.shuffle(toSortList);
+
+
+                long startTime = System.currentTimeMillis();
+                algorithm.sort(toSortList);
+                durations.add((int) (System.currentTimeMillis() - startTime));
+            }
+
+            drawGraphic(title, sizes, durations);
         }
-        new InsertionSort<Integer>().sort(list3);
-        System.out.println(list1);
-        System.out.println(list2);
-        System.out.println(list3);
-        System.out.println(list4);
-        System.out.println(list5);
-        System.out.println(list6);
-        System.out.println(list7);
-        System.out.println(list8);
+    }
+
+    private static void drawAllAlgorithmsOnPane(List<SortAlgorithm<Integer>> sortAlgorithms, int startSize, int maxSize, int step) {
+
+        ChartMaker chartMaker = new ChartMaker("Средняя сложность");
+
+        for (SortAlgorithm<Integer> algorithm : sortAlgorithms) {
+            String title = algorithm.getClass().getSimpleName();
+            List<Integer> sizes = new ArrayList<>();
+            List<Integer> durations = new ArrayList<>();
+
+            for (int i = startSize; i <= maxSize; i += step) {
+                sizes.add(i);
+
+                List<Integer> toSortList = new ArrayList<>(i);
+                for (int j = 0; j < i; ++j)
+                    toSortList.add(i - j);
+
+                Collections.shuffle(toSortList);
+
+                long startTime = System.currentTimeMillis();
+                algorithm.sort(toSortList);
+                durations.add((int) (System.currentTimeMillis() - startTime));
+            }
+
+            chartMaker.addSeries(title, sizes, durations);
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            chartMaker.init();
+            chartMaker.setSize(800, 600);
+            chartMaker.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            chartMaker.setLocationRelativeTo(null);
+            chartMaker.setVisible(true);
+        });
+    }
+
+    private static void drawGraphic(String title, List<Integer> x, List<Integer> y) {
+        SwingUtilities.invokeLater(() -> {
+            ChartMaker example = new ChartMaker(title, x, y);
+            example.init();
+            example.setSize(800, 600);
+            example.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            example.setLocationRelativeTo(null);
+            example.setVisible(true);
+        });
     }
 }

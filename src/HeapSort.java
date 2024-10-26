@@ -9,7 +9,7 @@ public class HeapSort<T extends Comparable<T>> implements SortAlgorithm<T> {
         }
 
         for (int i = length - 1; i >= 0; --i) {
-            T temp = list.get(0);
+            T temp = list.getFirst();
             list.set(0, list.get(i));
             list.set(i, temp);
             differentiation(list, i, 0);
